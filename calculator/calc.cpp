@@ -35,7 +35,7 @@ int main() {
     std::string expression;
 
     std::cout << "Welcome to c++ calculator!" << std::endl;
-    std::cout << "Operations: [+], [-], [*], [/], Brackets support" << std::endl;
+    std::cout << "Operations: [+], [-], [*], [/], [Brackets]" << std::endl;
 
     std::cout << "Expression: ";
     std::getline(std::cin, expression);
@@ -46,14 +46,7 @@ int main() {
         std::vector<Token> tokens = tokenize(expression);
         std::vector<Token> shuntingYardVec = shuntingYard(tokens);
 
-        for (Token t : tokens) {
-            std::cout << t.value << std::endl;
-        }
-        std::cout << "---------------------" << std::endl;
-        for (Token t : shuntingYardVec) {
-            std::cout << t.value << std::endl;
-        }
-        std::cout << "result: " << result(shuntingYardVec) << std::endl;
+        std::cout << "Result: " << result(shuntingYardVec) << std::endl;
         
         return 0;
     } catch (std::runtime_error& e) {
@@ -118,7 +111,7 @@ unsigned int getOperatorWeight(char op) {
 
 std::vector<Token> tokenize(std::string expression) {
     
-    if (expression.empty()) throw std::runtime_error("expression cannot be empty!");
+    if (expression.empty()) throw std::runtime_error("Expression is empty!");
     
     const std::string operations = "+-*/";
     std::vector<Token> tokens;
@@ -173,7 +166,7 @@ std::vector<Token> tokenize(std::string expression) {
 
 double result(std::vector<Token> shuntingYardVec) {
 
-    if (shuntingYardVec.empty()) throw std::runtime_error("shuntingYardVec cannot be empty!");
+    if (shuntingYardVec.empty()) throw std::runtime_error("Invalide expression! Empty shunting yard result!");
 
     std::stack<double> result;
 
@@ -185,6 +178,11 @@ double result(std::vector<Token> shuntingYardVec) {
         }
 
         if (shuntingYardVec[i].type == TokenType::Operator) {
+            if (result.size() < 1) {
+                throw std::runtime_error("Invalide expression!");
+                break;
+            }
+
             double right = result.top();
             result.pop();
             
@@ -203,6 +201,6 @@ double result(std::vector<Token> shuntingYardVec) {
         }
     }
 
-//    if (result.size() != 1) throw new std::runtime_error("Invalide expression");
+    if (result.size() != 1 or result.empty()) throw std::runtime_error("Invalide expression!");
     return result.top();
 }
