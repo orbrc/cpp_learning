@@ -61,10 +61,7 @@ std::vector<Token> shuntingYard(std::vector<Token> tokens) {
     std::vector<Token> stack;
 //  +- - 1; */ - 2; () - 0;
     for (Token t: tokens) {
-
-        // (2 + 2) / 2
-        // ( +
-        // 22
+        
         switch (t.type) {
             case TokenType::Number:
                 result.push_back(t);
