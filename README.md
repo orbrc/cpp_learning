@@ -1,4 +1,4 @@
-# cpp_learning 🏠
+# C++ Learning 🏠
 Simple Projects I Wrote While Learning C++
 
 ### Shunting yard calculator (calculator/calc.cpp)
