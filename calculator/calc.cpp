@@ -1,8 +1,5 @@
 #include <iostream>
 #include <stack>
-#include <stdexcept>
-#include <string>
-#include <unordered_map>
 #include <vector>
 
 // enumeration token types
@@ -10,7 +7,8 @@ enum class TokenType {
     Number,
     Operator,
     LeftBracket,
-    RightBracket
+    RightBracket, 
+    Funciton // sin(), log() - TODO  
 };
 
 // string value = "1234" or "*" or "+" etc, TokenType::Number and etc 
@@ -22,46 +20,41 @@ struct Token {
     value(value),
     type(type){}
 };
-unsigned int getOperatorWeight(char op); 
-
-std::unordered_map<std::string, TokenType> acceptedValues();
+unsigned int getOperatorWeight(char& op); 
 
 std::vector<Token> tokenize(std::string expression);
-std::vector<Token> shuntingYard(std::vector<Token> tokens);
+std::vector<Token> shuntingYard(std::vector<Token>& tokens);
 
-double result(std::vector<Token> shuntingYardVec);
+double result(std::vector<Token>& shuntingYardVec);
 
 int main() {
     std::string expression;
 
-    std::cout << "Welcome to c++ calculator!" << std::endl;
-    std::cout << "Operations: [+], [-], [*], [/], [Brackets]" << std::endl;
+    while (true) {
+        std::getline(std::cin, expression);
 
-    std::cout << "Expression: ";
-    std::getline(std::cin, expression);
+        if (expression == "exit" || expression == "quit" || expression == "q") {
+            std::cout << "Bye!" << std::endl;
+            break;
+        }
+        try {
+            std::vector<Token> tokens = tokenize(expression);
+            std::vector<Token> shuntingYardVec = shuntingYard(tokens);
 
-    std::cout << expression << std::endl;
-
-    try {
-        std::vector<Token> tokens = tokenize(expression);
-        std::vector<Token> shuntingYardVec = shuntingYard(tokens);
-
-        std::cout << "Result: " << result(shuntingYardVec) << std::endl;
-        
-        return 0;
-    } catch (std::runtime_error& e) {
-        std::cout << e.what() << std::endl;
-        return 1;
+            std::cout << expression << " = " << result(shuntingYardVec) << std::endl;
+        } catch (std::runtime_error& e) {
+            std::cout << e.what() << std::endl;
+            return 1;
+        }
     }
 }
-
-std::vector<Token> shuntingYard(std::vector<Token> tokens) {
+std::vector<Token> shuntingYard(std::vector<Token>& tokens) {
     
     std::vector<Token> result;
     std::vector<Token> stack;
 //  +- - 1; */ - 2; () - 0;
     for (Token t: tokens) {
-        
+
         switch (t.type) {
             case TokenType::Number:
                 result.push_back(t);
@@ -88,6 +81,9 @@ std::vector<Token> shuntingYard(std::vector<Token> tokens) {
                 }
                 stack.pop_back(); // pop left bracket
                 break;
+
+            case TokenType::Funciton:
+                break;
         }
     }
 
@@ -99,7 +95,7 @@ std::vector<Token> shuntingYard(std::vector<Token> tokens) {
     return result;
 }
 
-unsigned int getOperatorWeight(char op) {
+unsigned int getOperatorWeight(char& op) {
     if (op == '+' || op == '-') return 1;
     else if (op == '/' || op == '*') return 2;
 
@@ -161,7 +157,7 @@ std::vector<Token> tokenize(std::string expression) {
     return tokens;
 }
 
-double result(std::vector<Token> shuntingYardVec) {
+double result(std::vector<Token>& shuntingYardVec) {
 
     if (shuntingYardVec.empty()) throw std::runtime_error("Invalide expression! Empty shunting yard result!");
 
@@ -170,12 +166,12 @@ double result(std::vector<Token> shuntingYardVec) {
     for (int i = 0; i < std::size(shuntingYardVec); i++) {
 
         if (shuntingYardVec[i].type == TokenType::Number) {
-            result.push(std::stoi(shuntingYardVec[i].value));
+            result.push(std::stod(shuntingYardVec[i].value));
             continue;
         }
 
         if (shuntingYardVec[i].type == TokenType::Operator) {
-            if (result.size() < 1) {
+            if (result.size() < 2) {
                 throw std::runtime_error("Invalide expression!");
                 break;
             }
