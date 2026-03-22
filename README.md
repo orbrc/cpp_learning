@@ -18,5 +18,33 @@ clang++ calculator/calc.cpp -o calc/calculator
 ./calc/calculator
 ```
 
+### Arch logo
+Draw arch logo in your terminal
 
+#### Usage exmaples
+```
+user@arch ~> arch 5
+    *
+   ***
+  *   *
+ **   **
+**     **
+
+user@arch ~> arch 10
+         *
+        ***
+       *****
+      *******
+     **     **
+    ***     ***
+   ****     ****
+  ****       ****
+ *****       *****
+******       ******
+```
+#### Manual Compilation
+```bash
+clang++ arch.cpp -o arch
+./arch
+```
 
